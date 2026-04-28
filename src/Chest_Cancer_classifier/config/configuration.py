@@ -59,7 +59,7 @@ class ConfigurationManager:
         training = self.config.training
         prepare_base_model = self.config.prepare_base_model
         params = self.params
-        training_data = os.path.join(self.config.data_ingestion.unzip_dir, "Chest-CT-Scan-data")
+        training_data = os.path.join(self.config.data_ingestion.unzip_dir, "Chest_CT_scan_DATA")
         create_directories([
             Path(training.root_dir)
         ])
@@ -76,19 +76,22 @@ class ConfigurationManager:
         )
 
         return training_config
-    
 
 
+    def get_evaluation_config(self) -> EvaluationConfig:
+        eval_config = self.config.evaluation
+        create_directories([Path(eval_config.root_dir)])
 
-    # def get_evaluation_config(self) -> EvaluationConfig:
-    #     eval_config = EvaluationConfig(
-    #         path_of_model="artifacts/training/model.h5",
-    #         training_data="artifacts/data_ingestion/Chest-CT-Scan-data",
-    #         mlflow_uri="https://dagshub.com/entbappy/chest-Disease-Classification-MLflow-DVC.mlflow",
-    #         all_params=self.params,
-    #         params_image_size=self.params.IMAGE_SIZE,
-    #         params_batch_size=self.params.BATCH_SIZE
-    #     )
-    #     return eval_config
+        evaluation_config = EvaluationConfig(
+            root_dir=Path(eval_config.root_dir),
+            path_of_model=Path(eval_config.path_of_model),
+            training_data=Path(eval_config.training_data),
+            all_params=dict(self.params),
+            mlflow_uri=eval_config.mlflow_uri,
+            params_image_size=self.params.IMAGE_SIZE,
+            params_batch_size=self.params.BATCH_SIZE,
+            metric_file_name=Path(eval_config.metric_file_name),
+        )
+        return evaluation_config
 
       

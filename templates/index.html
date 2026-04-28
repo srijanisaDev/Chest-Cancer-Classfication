@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chest Cancer Classification</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="page-shell">
+        <header class="hero-card">
+            <div>
+                <p class="eyebrow">MLflow tracked CT analysis</p>
+                <h1>Chest Cancer Classification</h1>
+                <p class="hero-copy">Upload a chest CT image to get a softmax prediction from the trained CNN model. Evaluation metrics are logged to MLflow and displayed below.</p>
+            </div>
+            <div class="hero-badges">
+                <span>TensorFlow CNN</span>
+                <span>MLflow</span>
+                <span>Flask UI</span>
+            </div>
+        </header>
+
+        <main class="layout">
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>Model Snapshot</h2>
+                    <p>Latest evaluation results from the saved metrics file.</p>
+                </div>
+                <div class="stats-grid">
+                    <article class="stat-card">
+                        <span class="stat-label">Accuracy</span>
+                        <strong>{{ "%.2f"|format(metrics.accuracy * 100) if metrics else "--" }}%</strong>
+                    </article>
+                    <article class="stat-card">
+                        <span class="stat-label">Loss</span>
+                        <strong>{{ "%.4f"|format(metrics.loss) if metrics else "--" }}</strong>
+                    </article>
+                    <article class="stat-card">
+                        <span class="stat-label">Classes</span>
+                        <strong>{{ class_names|length }}</strong>
+                    </article>
+                </div>
+            </section>
+
+            <section class="panel upload-panel">
+                <div class="panel-header">
+                    <h2>Predict an Image</h2>
+                    <p>Choose a CT scan and receive the predicted label with confidence.</p>
+                </div>
+
+                <form class="upload-form" method="POST" enctype="multipart/form-data">
+                    <label class="file-dropzone">
+                        <input type="file" name="image" accept="image/*" required>
+                        <span>Drop or choose a CT image</span>
+                        <small>PNG, JPG, JPEG supported</small>
+                    </label>
+                    <button type="submit">Run Prediction</button>
+                </form>
+
+                {% if error_message %}
+                    <div class="message error">{{ error_message }}</div>
+                {% endif %}
+
+                {% if uploaded_image %}
+                <div class="preview-grid">
+                    <img src="{{ url_for('static', filename=uploaded_image) }}" alt="Uploaded CT preview" class="preview-image">
+                    <div class="result-card">
+                        <p class="result-label">Prediction</p>
+                        <h3>{{ prediction.label if prediction else "Unavailable" }}</h3>
+                        <p class="confidence">Confidence: {{ prediction.confidence if prediction else "--" }}%</p>
+                        {% if prediction %}
+                            <div class="probabilities">
+                                {% for value in prediction.probabilities %}
+                                    <div>
+                                        <span>{{ class_names[loop.index0] if loop.index0 < class_names|length else loop.index0 }}</span>
+                                        <strong>{{ value }}%</strong>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </section>
+        </main>
+    </div>
+</body>
+</html>

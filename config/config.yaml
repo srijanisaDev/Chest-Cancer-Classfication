@@ -17,3 +17,11 @@ prepare_base_model:
 training:
   root_dir: artifacts/training
   trained_model_path: artifacts/training/model.h5
+
+
+evaluation:
+  root_dir: artifacts/evaluation
+  path_of_model: artifacts/training/model.h5
+  training_data: artifacts/data_ingestion/Chest_CT_scan_DATA
+  mlflow_uri: mlruns
+  metric_file_name: artifacts/evaluation/metrics.json

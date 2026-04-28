@@ -11,3 +11,8 @@
 7. Update the pipeline
 8. Update main.py
 9. Update dvc.yaml
+
+## Run
+1. Train, evaluate, and log metrics with `python main.py`
+2. Start the website with `python app.py`
+3. Open the local Flask URL shown in the terminal to upload a CT image and view the prediction
